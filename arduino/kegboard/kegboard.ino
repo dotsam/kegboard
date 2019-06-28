@@ -42,7 +42,6 @@
 
 #include <avr/pgmspace.h>
 #include <string.h>
-#include <util/crc16.h>
 #include <util/delay.h>
 #include <EEPROM.h>
 
@@ -83,7 +82,7 @@ typedef struct {
 static UptimeStat gUptimeStat;
 
 #if KB_ENABLE_CHIP_LED
-static int gChipLedBrightness = 0xff;
+static int gChipLedBrightness = 0x0f;
 #endif
 
 static uint8_t gSerialNumber[SERIAL_NUMBER_SIZE_BYTES];
@@ -154,7 +153,7 @@ void meterInterruptF()
 void writeHelloPacket()
 {
   int firmware_version = FIRMWARE_VERSION;
-  int protocol_version = 1;
+  int protocol_version = PROTOCOL_VERSION;
   KegboardPacket packet;
   packet.SetType(KBM_HELLO_ID);
   packet.AddTag(KBM_HELLO_TAG_FIRMWARE_VERSION, sizeof(firmware_version), (char*)&firmware_version);
@@ -175,16 +174,9 @@ void writeMeterPacket(int channel)
     gLastMeters[channel] = status;
   }
 
-  switch (channel) {
-    case 0:
-      TXLED1;
-      break;
-    case 1:
-      TXLED1;
-      break;
-    default:
-      break;
-  }
+  // Turn on the other LED when sending a meter update packet
+  // Will be turned off again right away in the main loop
+  TXLED1;
 
   name[4] = 0x30 + channel;
   KegboardPacket packet;
@@ -194,10 +186,26 @@ void writeMeterPacket(int channel)
   packet.Print();
 }
 
+#if KB_ENABLE_SELFTEST
+void doTestPulse()
+{
+  // Strobes the test pin `KB_SELFTEST_PULSES` times, every
+  // `KB_SELFTEST_INTERVAL_MS` milliseconds
+  unsigned long now = millis();
+  if ((now - gLastTestPulseMillis) >= KB_SELFTEST_INTERVAL_MS) {
+    gLastTestPulseMillis = now;
+    for (int i=0; i<KB_SELFTEST_PULSES; i++) {
+      digitalWrite(KB_PIN_TEST_PULSE, 1);
+      digitalWrite(KB_PIN_TEST_PULSE, 0);
+    }
+  }
+}
+#endif
+
 #if KB_ENABLE_CHIP_LED
 void pulseChipLed() {
-  // Pulse fast when serial is connected, slow otherwise.
-  int rate = Serial ? 8 : 2;
+  // Pulse slow when serial is connected, fast otherwise.
+  int rate = Serial ? 2 : 8;
   if (gChipLedBrightness >= 0) {
     analogWrite(KB_PIN_LED_CHIP, gChipLedBrightness);
   } else {
@@ -226,44 +234,35 @@ void setup()
 
   // Flow meter steup. Enable internal weak pullup to prevent disconnected line
   // from ticking away.
-  pinMode(KB_PIN_METER_A, INPUT);
-  digitalWrite(KB_PIN_METER_A, HIGH);
+  pinMode(KB_PIN_METER_A, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_A), meterInterruptA, FALLING);
 
 #ifdef KB_PIN_METER_B
-  pinMode(KB_PIN_METER_B, INPUT);
-  digitalWrite(KB_PIN_METER_B, HIGH);
+  pinMode(KB_PIN_METER_B, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_B), meterInterruptB, FALLING);
 #endif
 
 #ifdef KB_PIN_METER_C
-  pinMode(KB_PIN_METER_C, INPUT);
-  digitalWrite(KB_PIN_METER_C, HIGH);
+  pinMode(KB_PIN_METER_C, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_C), meterInterruptC, FALLING);
 #endif
 
 #ifdef KB_PIN_METER_D
-  pinMode(KB_PIN_METER_D, INPUT);
-  digitalWrite(KB_PIN_METER_D, HIGH);
+  pinMode(KB_PIN_METER_D, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_D), meterInterruptD, FALLING);
 #endif
 
 #ifdef KB_PIN_METER_E
-  pinMode(KB_PIN_METER_E, INPUT);
-  digitalWrite(KB_PIN_METER_E, HIGH);
+  pinMode(KB_PIN_METER_E, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_E), meterInterruptE, FALLING);
 #endif
 
 #ifdef KB_PIN_METER_F
-  pinMode(KB_PIN_METER_F, INPUT);
-  digitalWrite(KB_PIN_METER_F, HIGH);
+  pinMode(KB_PIN_METER_F, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(KB_PIN_METER_F), meterInterruptF, FALLING);
 #endif
 
   Serial.begin(115200);
-
-  TXLED1;
-  RXLED1;
 
   writeHelloPacket();
 }

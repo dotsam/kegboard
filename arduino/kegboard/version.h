@@ -4,3 +4,4 @@
 // significant new feature in the firmware.
 
 #define FIRMWARE_VERSION 18
+#define PROTOCOL_VERSION 1
