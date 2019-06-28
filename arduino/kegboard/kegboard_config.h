@@ -6,23 +6,23 @@
 // safe.
 
 // Check for & report 1-wire temperature sensors?
-#define KB_ENABLE_ONEWIRE_THERMO   1
+#define KB_ENABLE_ONEWIRE_THERMO   0
 
 // Check for & report 1-wire devices on the ID bus?
-#define KB_ENABLE_ONEWIRE_PRESENCE 1
+#define KB_ENABLE_ONEWIRE_PRESENCE 0
 
 // Enable a selftest pulse?
-#define KB_ENABLE_SELFTEST  1
+#define KB_ENABLE_SELFTEST  0
 
 // Enable buzzer?
-#define KB_ENABLE_BUZZER    1
+#define KB_ENABLE_BUZZER    0
 
 // Enable PARALLAX RFID?
 #define KB_ENABLE_PARALLAX_RFID 0
 #define KB_ENABLE_PARALLAX_RFID_LEGACY_TAGS 0
 
 // Enable ID-12 RFID?
-#define KB_ENABLE_ID12_RFID 1
+#define KB_ENABLE_ID12_RFID 0
 
 // Enable Wiegand RFID reader?
 // Note: Must set KB_ENABLE_ID12_RFID to 0 if enabling this.
@@ -37,18 +37,7 @@
 #define KB_SOFT_DEBOUNCE_MICROS 1200
 
 // Enable chip LED?
-#define KB_ENABLE_CHIP_LED 0
-
-#if BOARD_KBPM
-#undef KB_ENABLE_BUZZER
-#undef KB_ENABLE_ID12_RFID
-#undef KB_ENABLE_CHIP_LED
-#undef KB_ENABLE_SELFTEST
-#define KB_ENABLE_BUZZER 0
-#define KB_ENABLE_ID12_RFID 0
 #define KB_ENABLE_CHIP_LED 1
-#define KB_ENABLE_SELFTEST 0
-#endif
 
 //
 // Pin configuration - KEGBOARD VERSION
@@ -79,19 +68,21 @@
 //   A5 - gpio pin B
 //
 
-#define KB_PIN_METER_A            2
-//Parallax RFID needs two IO pins, using flow meter B's by default
-#if KB_ENABLE_PARALLAX_RFID
-#define KB_PIN_SERIAL_RFID_TX     3
-#else
-#define KB_PIN_METER_B            3
-#endif
+#define KB_PIN_METER_A            0
+#define KB_PIN_METER_B            1
+#define KB_PIN_METER_C            2
+#define KB_PIN_METER_D            3
+#define KB_PIN_METER_E            7
+
+#define KB_NUM_METERS             5
+
+
 #define KB_PIN_LED_FLOW_A         4
 #define KB_PIN_LED_FLOW_B         5
 #define KB_PIN_SERIAL_RFID_RX     6
-#define KB_PIN_ONEWIRE_THERMO     7
+
 #define KB_PIN_ONEWIRE_PRESENCE   8
-#define KB_PIN_LED_CHIP           9
+#define KB_PIN_LED_CHIP           17
 #define KB_PIN_RFID_RESET         10
 #define KB_PIN_BUZZER             11
 #define KB_PIN_TEST_PULSE         12
@@ -103,24 +94,12 @@
 #define KB_PIN_GPIO_A             A4
 #define KB_PIN_GPIO_B             A5
 
-
 #define KB_PIN_MAGSTRIPE_CLOCK    3
 #define KB_PIN_MAGSTRIPE_DATA     A4
 #define KB_PIN_MAGSTRIPE_CARD_PRESENT A5
 
 #define KB_PIN_WIEGAND_RFID_DATA0 A4
 #define KB_PIN_WIEGAND_RFID_DATA1 A5
-
-// Atmega1280 (aka Arduino mega) section
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#define KB_NUM_METERS             6
-#define KB_PIN_METER_C            21
-#define KB_PIN_METER_D            20
-#define KB_PIN_METER_E            19
-#define KB_PIN_METER_F            18
-#else
-#define KB_NUM_METERS             2
-#endif // defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 
 //
 // Device configuration defaults
