@@ -54,10 +54,6 @@ else:
 
 FLAGS = gflags.FLAGS
 
-gflags.DEFINE_string('kegboard_device', _DEFAULT_PORT,
-    'An explicit device file (eg /dev/ttyUSB0) on which to listen for kegboard '
-    'packets.')
-
 gflags.DEFINE_integer('kegboard_speed', 115200,
     'Baud rate of device at --kegboard_device')
 
