@@ -15,8 +15,6 @@ SHORT_DESCRIPTION = DOCLINES[0]
 LONG_DESCRIPTION = '\n'.join(DOCLINES[2:])
 
 def setup_package():
-  from distribute_setup import use_setuptools
-  use_setuptools()
   from setuptools import setup, find_packages
 
   setup(
@@ -30,7 +28,6 @@ def setup_package():
       packages = find_packages(exclude=['testdata']),
       namespace_packages = ['kegbot'],
       scripts = [
-        'distribute_setup.py',
         'bin/kegboard-monitor.py',
         'bin/kegboard-tester.py',
         'bin/kegboard-info.py',
