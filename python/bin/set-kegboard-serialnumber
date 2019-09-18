@@ -34,19 +34,19 @@ class KegboardMonitorApp(app.App):
   def _wait_for_response(self, board):
     msg = board.wait_for_ping()
     if not msg:
-      print 'Gave up pinging kegboard!'
+      print('Gave up pinging kegboard!')
       sys.exit(1)
 
-    print '%s: firmware_version=%s serial_number=%s' % (board, msg.firmware_version,
-        msg.serial_number)
-    print ''
+    print('%s: firmware_version=%s serial_number=%s' % (board, msg.firmware_version,
+        msg.serial_number))
+    print('')
     return msg
 
   def _MainLoop(self):
     self._logger.debug('Waiting for kegboard ...')
     board = kegboard.get_kegboard()
     if not board:
-      print 'No kegboard found.'
+      print('No kegboard found.')
       sys.exit(1)
     board.open()
     self._logger.debug('Got kegboard: %s' % board)
@@ -54,14 +54,14 @@ class KegboardMonitorApp(app.App):
     pkt = self._wait_for_response(board)
 
     if pkt.serial_number:
-      print 'Board already has a serial number.'
+      print('Board already has a serial number.')
       sys.exit(1)
 
     msg = 'Set board serial number?'
-    proceed = True if raw_input("%s (y/N) " % msg).lower() == 'y' else False
+    proceed = True if input("%s (y/N) " % msg).lower() == 'y' else False
 
     if not proceed:
-      print 'Aborting!'
+      print('Aborting!')
       sys.exit(1)
 
     serial_number = 'KB-0000-0000-%08x' % random.getrandbits(32)

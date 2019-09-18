@@ -41,5 +41,5 @@ def setup_package():
       include_package_data = True,
   )
 
-if __name__ == '__main__':
+if __name__ in ['__main__', 'builtins', '__builtin__']:
   setup_package()
