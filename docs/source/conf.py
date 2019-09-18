@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Kegboard'
-copyright = u'2012, mike wakerly'
+project = 'Kegboard'
+copyright = '2012, mike wakerly'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -183,8 +183,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Kegboard.tex', u'Kegboard Documentation',
-   u'mike wakerly', 'manual'),
+  ('index', 'Kegboard.tex', 'Kegboard Documentation',
+   'mike wakerly', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,8 +213,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'kegboard', u'Kegboard Documentation',
-     [u'mike wakerly'], 1)
+    ('index', 'kegboard', 'Kegboard Documentation',
+     ['mike wakerly'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Kegboard', u'Kegboard Documentation',
-   u'mike wakerly', 'Kegboard', 'One line description of project.',
+  ('index', 'Kegboard', 'Kegboard Documentation',
+   'mike wakerly', 'Kegboard', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -245,10 +245,10 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'Kegboard'
-epub_author = u'mike wakerly'
-epub_publisher = u'mike wakerly'
-epub_copyright = u'2012, mike wakerly'
+epub_title = 'Kegboard'
+epub_author = 'mike wakerly'
+epub_publisher = 'mike wakerly'
+epub_copyright = '2012, mike wakerly'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
