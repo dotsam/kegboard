@@ -27,6 +27,7 @@ def crc16_ccitt(bytes):
   table = _get_crc16_ccitt_table()
   crc = 0
   for byte in bytes:
-    byte = ord(byte)
+    if not isinstance(byte, int):
+      byte = ord(byte)
     crc = ((crc >> 8) ^ table[(crc ^ byte) & 0xff])
   return crc

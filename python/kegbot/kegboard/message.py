@@ -25,9 +25,9 @@ from .exceptions import *
 from . import crc16
 
 
-KBSP_PREFIX = "KBSP v1:"
+KBSP_PREFIX = b"KBSP v1:"
 KBSP_PAYLOAD_MAXLEN = 112
-KBSP_TRAILER = "\r\n"
+KBSP_TRAILER = b"\r\n"
 KBSP_MAXLEN = KBSP_PAYLOAD_MAXLEN + len(KBSP_PREFIX) + len(KBSP_TRAILER)
 
 
@@ -39,6 +39,8 @@ class Field(util.BaseField):
     raise NotImplementedError
 
   def ToString(self, value):
+    if isinstance(value, (bytes, bytearray)):
+      value = value.decode()
     return str(value)
 
 
@@ -84,11 +86,10 @@ class OnewireIdField(Uint64Field):
 
 class StringField(Field):
   def ParseValue(self, bytes):
-    return bytes.strip('\x00')
+    return bytes.strip(b'\x00')
 
   def ToBytes(self, value):
-    return str(value) + '\x00'
-
+    return value
 
 class BytesField(Field):
   def ToString(self, value):
@@ -103,7 +104,7 @@ class BytesField(Field):
 
 class OutputField(Uint16Field):
   def ParseValue(self, bytes):
-    if bytes.strip('\x00'):
+    if bytes.strip(b'\x00'):
       return 1
     else:
       return 0
@@ -168,23 +169,20 @@ class Message(util.BaseMessage):
     return length
 
   def ToBytes(self):
-    payload = io.StringIO()
+    payload = b''
     for field_name, field in self._fields.items():
       field_bytes = field.ToBytes(self._values[field_name])
-      payload.write(struct.pack('<BB', field.tagnum, len(field_bytes)))
-      payload.write(field_bytes)
+      payload += struct.pack(b'<BB', field.tagnum, len(field_bytes))
+      payload += field_bytes
 
-    payload_str = payload.getvalue()
-    payload.close()
-
-    out = io.StringIO()
-    out.write(KBSP_PREFIX)
-    out.write(struct.pack('<HH', self.MESSAGE_ID, len(payload_str)))
-    out.write(payload_str)
-    crc = crc16.crc16_ccitt(out.getvalue())
-    out.write(struct.pack('<H', crc))
-    out.write('\r\n')
-    return out.getvalue()
+    out = b''
+    out += KBSP_PREFIX
+    out += struct.pack(b'<HH', self.MESSAGE_ID, len(payload))
+    out += payload
+    crc = crc16.crc16_ccitt(out)
+    out += struct.pack(b'<H', crc)
+    out += b'\r\n'
+    return out
 
 
 class HelloMessage(Message):
@@ -273,4 +271,3 @@ def get_message_by_id(message_id, payload_bytes=None):
   if not cls:
     raise UnknownMessageError
   return cls(payload_bytes=payload_bytes)
-

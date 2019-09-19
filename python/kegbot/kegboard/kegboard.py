@@ -90,7 +90,7 @@ def wait_for_kegboard(interval=0.1, timeout=None, glob_paths=None):
 class Kegboard:
   def __init__(self, device_path, speed=None):
     self.device_path = device_path
-    self.incomplete_message = ""
+    self.incomplete_message = b''
     if not speed:
       speed = FLAGS.kegboard_speed
     self.speed = speed
@@ -114,7 +114,7 @@ class Kegboard:
     self._assert_open()
     self.fd.close()
     self.fd = None
-    self.incomplete_message = ""
+    self.incomplete_message = b''
 
   def close_quietly(self):
     """Similar to `close()`, but swallows any errors."""
@@ -136,9 +136,9 @@ class Kegboard:
       c = self.fd.read(1)
 
       if self.incomplete_message is None:
-        if c == '\n':
+        if c == b'\n':
           # Reset.
-          self.incomplete_message = ''
+          self.incomplete_message = b''
         continue
 
       self.incomplete_message += c
@@ -154,7 +154,7 @@ class Kegboard:
       elif self.incomplete_message[-2:] == KBSP_TRAILER:
         # Packet ended! Check it.
         bytes = self.incomplete_message
-        self.incomplete_message = ''
+        self.incomplete_message = b''
 
         header = bytes[:12]
         payload = bytes[12:-4]
